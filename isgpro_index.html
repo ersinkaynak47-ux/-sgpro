@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>İSG İşletme Yönetim Programı</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#687386;--line:#dfe5ee;--accent:#1f5eff;--danger:#c62828;--ok:#16804b}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#102044;color:#fff;padding:18px 24px;position:sticky;top:0;z-index:10}
+header h1{margin:0;font-size:20px} header p{margin:4px 0 0;color:#c8d3ea;font-size:12px}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 78px)}
+nav{background:#fff;border-right:1px solid var(--line);padding:12px;position:sticky;top:78px;height:calc(100vh - 78px)}
+nav button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:11px 12px;margin:2px 0;border-radius:9px;color:#344054;cursor:pointer}
+nav button.active,nav button:hover{background:#eaf0ff;color:#1549c8;font-weight:700}
+main{padding:24px;max-width:1500px;width:100%;margin:auto}
+.tab{display:none}.tab.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 2px 8px #1020440a}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:700}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cfd7e4;border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}.row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+button.primary,.btn{border:0;border-radius:8px;padding:10px 14px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
+.btn.secondary{background:#eef2f8;color:#24324a}.btn.danger{background:#fff0f0;color:#b42318}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+h2{margin:0 0 14px;font-size:18px} h3{font-size:15px;margin:0 0 10px}.muted{color:var(--muted);font-size:12px}
+.kpi{font-size:27px;font-weight:800;margin-top:5px}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#edf2ff;color:#214bc0}
+table{width:100%;border-collapse:collapse;font-size:12px} th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top} th{background:#f7f9fc}
+.alert{padding:12px;border-radius:10px;background:#fff7e6;border:1px solid #f4d38b;color:#7a4b00;font-size:12px;margin-top:10px}
+.ok{background:#eaf8f0;border-color:#b8e4ca;color:#12613a}.dangerbox{background:#fff0f0;border-color:#f3b3b3;color:#8b1e1e}
+@media(max-width:900px){.layout{grid-template-columns:1fr}nav{position:static;height:auto;display:flex;overflow:auto;gap:4px;border-right:0;border-bottom:1px solid var(--line)}nav button{white-space:nowrap}.span-8,.span-6,.span-4,.span-3{grid-column:span 12}.row,.row3{grid-template-columns:1fr}}
+@media print{nav,header,.actions{display:none!important}.layout{display:block}main{max-width:none;padding:0}.tab{display:block!important}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <h1>İSG İşletme Yönetim Programı</h1>
+  <p>6331 sayılı Kanun ve ilgili İSG mevzuatı esas alınarak işletme bazlı planlama ve kayıt yönetimi</p>
+</header>
+<div class="layout">
+<nav>
+<button class="active" data-tab="dashboard">📊 Dashboard</button>
+<button data-tab="isletme">🏢 İşletme Bilgileri</button>
+<button data-tab="hesap">🧮 Yasal Hesaplamalar</button>
+<button data-tab="risk">⚠️ Risk Değerlendirmesi</button>
+<button data-tab="acil">🚨 Acil Durum Eylem Planı</button>
+<button data-tab="yillik">📅 Yıllık Çalışma Planı</button>
+<button data-tab="aylik">🗓️ Aylık Çalışma Planı</button>
+<button data-tab="egitim">🎓 Eğitimler</button>
+<button data-tab="kontrol">🔎 Denetim / Uygunsuzluk</button>
+<button data-tab="mevzuat">📚 Mevzuat / Kontrol Konuları</button>
+<button data-tab="rapor">🖨️ Rapor / Yazdır</button>
+</nav>
+
+<main>
+<section id="dashboard" class="tab active">
+<div class="grid">
+<div class="card span-3"><div class="muted">Çalışan</div><div class="kpi" id="kpiEmployees">0</div></div>
+<div class="card span-3"><div class="muted">Tehlike sınıfı</div><div class="kpi" id="kpiClass">—</div></div>
+<div class="card span-3"><div class="muted">İSG uzmanı</div><div class="kpi" id="kpiExpert">0 dk/ay</div></div>
+<div class="card span-3"><div class="muted">Destek elemanı</div><div class="kpi" id="kpiSupport">0</div></div>
+<div class="card span-6"><h3>İşletme Özeti</h3><div id="summary" class="muted">İşletme bilgilerini girin.</div></div>
+<div class="card span-6"><h3>Mevzuat Uyarıları</h3><div id="warnings"></div></div>
+<div class="card span-12"><h3>İSG Yükümlülük Durumu</h3><div id="obligations"></div></div>
+</div>
+</section>
+
+<section id="isletme" class="tab">
+<div class="card">
+<h2>İşletme Bilgileri</h2>
+<div class="row3">
+<div><label>İşletme unvanı</label><input id="company" placeholder="Örn. ABC Metal San. Ltd."></div>
+<div><label>SGK sicil no</label><input id="sgk"></div>
+<div><label>İşveren / yetkili</label><input id="employer"></div>
+</div>
+<div class="row3" style="margin-top:10px">
+<div><label>Çalışan sayısı</label><input id="employees" type="number" min="0" value="0"></div>
+<div><label>NACE 6'lı kod</label><input id="nace" placeholder="Örn. 25.62.01"></div>
+<div><label>Tehlike sınıfı</label><select id="hazard"><option value="">Seçiniz</option><option>Az Tehlikeli</option><option>Tehlikeli</option><option>Çok Tehlikeli</option></select></div>
+</div>
+<div class="row3" style="margin-top:10px">
+<div><label>Adres</label><input id="address"></div>
+<div><label>İşyeri hekimi var mı?</label><select id="doctor"><option>Evet</option><option>Hayır</option></select></div>
+<div><label>İSG uzmanı sınıfı</label><select id="expertClass"><option>C</option><option>B</option><option>A</option></select></div>
+</div>
+<div class="row" style="margin-top:10px">
+<div><label>Faaliyet / işletme tipi</label>
+<select id="activity">
+<option value="">Seçiniz</option>
+<option>Ofis / Büro</option><option>Restoran / Kafe</option><option>Market / Perakende</option>
+<option>Otel / Konaklama</option><option>Oto Servis / Bakım</option><option>Depo / Lojistik</option>
+<option>Metal İmalat</option><option>Ahşap / Mobilya</option><option>İnşaat</option>
+<option>Sağlık Kuruluşu</option><option>Eğitim Kurumu</option><option>Akaryakıt İstasyonu</option>
+<option>Tekstil</option><option>Gıda İmalatı</option><option>Kimyasal Madde Kullanılan İşletme</option>
+</select></div>
+<div><label>Çalışma şekli</label><select id="workType"><option>Gündüz</option><option>Vardiyalı</option><option>Gece çalışması var</option></select></div>
+</div>
+<div class="actions">
+<button class="primary" onclick="saveCompany()">Kaydet ve hesapla</button>
+<button class="btn secondary" onclick="loadDemo()">Örnek işletme yükle</button>
+</div>
+<div class="alert">NACE kodu, işletmenin asıl faaliyetini en doğru tanımlayan 6'lı kod üzerinden değerlendirilmelidir. Birden fazla asıl faaliyet varsa tehlike sınıfı açısından daha yüksek sınıf esas alınabilir. <span class="muted">NACE veri tabanı bu ilk sürümde manuel girişe açıktır; sonraki sürümde resmi tebliğ veri seti içe aktarılabilir.</span></div>
+</div>
+</section>
+
+<section id="hesap" class="tab">
+<div class="grid">
+<div class="card span-6"><h2>İSG Uzmanı Hizmet Süresi</h2><div id="expertCalc"></div></div>
+<div class="card span-6"><h2>İşyeri Hekimi Hizmet Süresi</h2><div id="doctorCalc"></div></div>
+<div class="card span-6"><h2>Acil Durum Destek Elemanları</h2><div id="supportCalc"></div></div>
+<div class="card span-6"><h2>Temel İSG Eğitimleri</h2><div id="trainingCalc"></div></div>
+</div>
+</section>
+
+<section id="risk" class="tab">
+<div class="card">
+<h2>Risk Değerlendirmesi</h2>
+<div class="row3">
+<div><label>Yöntem</label><select id="riskMethod"><option value="5x5">5x5 L×S</option><option value="kinney">Fine-Kinney P×F×S</option></select></div>
+<div><label>Değerlendirme tarihi</label><input id="riskDate" type="date"></div>
+<div><label>Yenileme tarihi (öneri)</label><input id="riskNext" type="date" readonly></div>
+</div>
+<div class="actions"><button class="primary" onclick="addRisk()">+ Risk ekle</button><button class="btn secondary" onclick="printSection('risk')">Yazdır</button></div>
+<div style="overflow:auto;margin-top:12px"><table><thead><tr><th>Bölüm/Faaliyet</th><th>Tehlike</th><th>Risk</th><th>Olasılık</th><th>Frekans</th><th>Şiddet</th><th>Skor</th><th>Düzey</th><th>Önlem / Termin</th><th></th></tr></thead><tbody id="riskBody"></tbody></table></div>
+</div>
+</section>
+
+<section id="acil" class="tab">
+<div class="card">
+<h2>Acil Durum Eylem Planı</h2>
+<p class="muted">İşyerine özgü acil durumlar, ekipler, görevler ve tatbikat planını oluşturun.</p>
+<div class="actions"><button class="primary" onclick="addEmergency()">+ Acil durum ekle</button><button class="btn secondary" onclick="printSection('acil')">Yazdır</button></div>
+<table><thead><tr><th>Acil durum</th><th>Önleyici tedbir</th><th>Müdahale / tahliye</th><th>Sorumlu</th><th>Tatbikat tarihi</th><th></th></tr></thead><tbody id="emergencyBody"></tbody></table>
+<div class="card" style="margin-top:14px;background:#fafcff"><h3>Destek Ekipleri</h3><div id="teamSummary"></div></div>
+</div>
+</section>
+
+<section id="yillik" class="tab">
+<div class="card"><h2>Yıllık Çalışma Planı</h2><p class="muted">İşyerinin tehlike sınıfı ve çalışan sayısına göre başlangıç görevleri oluşturulur.</p>
+<div class="actions"><button class="primary" onclick="generateAnnual()">Yıllık planı oluştur</button><button class="btn secondary" onclick="printSection('yillik')">Yazdır</button></div>
+<table><thead><tr><th>Ay</th><th>Faaliyet</th><th>Periyot</th><th>Sorumlu</th><th>Durum</th></tr></thead><tbody id="annualBody"></tbody></table></div>
+</section>
+
+<section id="aylik" class="tab">
+<div class="card"><h2>Aylık Çalışma Planı</h2><div class="row3"><div><label>Yıl</label><input id="planYear" type="number"></div><div><label>Ay</label><select id="planMonth"></select></div><div><label>Uzman</label><input id="planner" placeholder="İSG Uzmanı"></div></div>
+<div class="actions"><button class="primary" onclick="generateMonthly()">Aylık planı oluştur</button><button class="btn secondary" onclick="printSection('aylik')">Yazdır</button></div>
+<table><thead><tr><th>Tarih</th><th>Faaliyet</th><th>Süre</th><th>Açıklama</th><th>Durum</th></tr></thead><tbody id="monthlyBody"></tbody></table></div>
+</section>
+
+<section id="egitim" class="tab">
+<div class="card"><h2>Eğitim Planı</h2><div class="actions"><button class="primary" onclick="generateTraining()">Eğitim planını oluştur</button><button class="btn secondary" onclick="printSection('egitim')">Yazdır</button></div>
+<table><thead><tr><th>Eğitim</th><th>Hedef kitle</th><th>Asgari süre</th><th>Yöntem</th><th>Periyot / koşul</th></tr></thead><tbody id="trainingBody"></tbody></table></div>
+</section>
+
+<section id="mevzuat" class="tab">
+<div class="card"><h2>İşletmeye Özgü Denetim Konuları</h2>
+<p class="muted">Faaliyet seçimine göre başlangıç kontrol başlıkları otomatik gelir. Uzman sahada işletmeye özgü maddeleri ekleyebilir.</p>
+<div class="actions"><button class="primary" onclick="generateChecklist()">Kontrol konularını oluştur</button><button class="btn secondary" onclick="printSection('mevzuat')">Yazdır</button></div>
+<div id="checklistBox"></div></div>
+</section>
+
+<section id="kontrol" class="tab">
+<div class="card"><h2>Denetim / Uygunsuzluk Takibi</h2><div class="actions"><button class="primary" onclick="addFinding()">+ Uygunsuzluk ekle</button><button class="btn secondary" onclick="printSection('kontrol')">Yazdır</button></div>
+<table><thead><tr><th>Alan</th><th>Uygunsuzluk</th><th>Mevzuat / referans</th><th>Risk</th><th>Önerilen düzeltme</th><th>Termin</th><th>Durum</th><th></th></tr></thead><tbody id="findingBody"></tbody></table></div>
+</section>
+
+<section id="rapor" class="tab">
+<div class="card"><h2>Rapor Merkezi</h2><p class="muted">Bu sürüm tüm bölümleri tarayıcı yazdırma ekranından PDF olarak kaydetmeye uygundur.</p>
+<div class="actions">
+<button class="primary" onclick="window.print()">Tüm programı yazdır / PDF</button>
+<button class="btn secondary" onclick="exportData()">Verileri JSON olarak dışa aktar</button>
+<label class="btn secondary" style="display:inline-block">JSON içe aktar <input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+</div>
+<div class="alert">Bu program bir hesaplama ve dokümantasyon yardımcısıdır. 17.08.2026 itibarıyla Bakanlık açıklamalarında yer alan İSG uzmanı 6/8/12 dk ve işyeri hekimi 5/10/15 dk esasları kullanılmıştır. Mevzuat değişikliklerinde resmi kaynak kontrol edilmelidir. Nihai risk değerlendirmesi ve planlar, işyerinin fiili koşulları yerinde incelenerek ve güncel mevzuat kontrol edilerek uzman tarafından onaylanmalıdır.</div>
+</div>
+</section>
+</main>
+</div>
+
+<script>
+const S={company:{},risks:[],emergencies:[],findings:[],annual:[],monthly:[],training:[]};
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem('isgProgram',JSON.stringify(S));}
+function load(){try{Object.assign(S,JSON.parse(localStorage.getItem('isgProgram'))||{});}catch(e){}}
+function companyData(){
+ return {company:$('company').value,sgk:$('sgk').value,employer:$('employer').value,employees:+$('employees').value||0,nace:$('nace').value,hazard:$('hazard').value,address:$('address').value,doctor:$('doctor').value,expertClass:$('expertClass').value,activity:$('activity').value,workType:$('workType').value};
+}
+function saveCompany(){S.company=companyData();save();calculate();renderAll();alert('İşletme bilgileri kaydedildi.');}
+function loadDemo(){
+ $('company').value='ABC Metal Sanayi Ltd.';$('sgk').value='1234567';$('employer').value='İşveren';$('employees').value=86;$('nace').value='25.62.01';$('hazard').value='Tehlikeli';$('address').value='İstanbul';$('doctor').value='Evet';$('expertClass').value='B';$('activity').value='Metal İmalat';saveCompany();generateChecklist();
+}
+function calculate(){
+ const c=S.company||{}, n=c.employees||0, h=c.hazard||'';
+ $('kpiEmployees').textContent=n;$('kpiClass').textContent=h||'—';
+ let em=0,dm=0, expertFull=0, doctorFull=0;
+ if(h==='Az Tehlikeli'){em=n<2000?n*6:n*0; expertFull=2000;dm=n<2000?n*5:n*0;doctorFull=2000}
+ if(h==='Tehlikeli'){em=n<1500?n*8:n*0; expertFull=1500;dm=n<1000?n*10:n*0;doctorFull=1000}
+ if(h==='Çok Tehlikeli'){em=n<1000?n*12:n*0; expertFull=1000;dm=n<750?n*15:n*0;doctorFull=750}
+ if(n && ((h==='Az Tehlikeli'&&n>=2000)||(h==='Tehlikeli'&&n>=1500)||(h==='Çok Tehlikeli'&&n>=1000))) em=n>=expertFull?Math.floor(n/expertFull)*0 + (n/expertFull)*0:em;
+ const ek=(h==='Az Tehlikeli'?6:h==='Tehlikeli'?8:h==='Çok Tehlikeli'?12:0);
+ const ef=expertFull&&n>=expertFull?Math.floor(n/expertFull):0, er=expertFull&&n>=expertFull?n%expertFull:n;
+ const erMin=er*ek;
+ $('kpiExpert').textContent=ef?`${ef} tam + ${erMin} dk/ay`:`${em} dk/ay`;
+ $('kpiSupport').textContent=supportCount(n,h);
+ $('summary').innerHTML=`<b>${c.company||'İşletme adı girilmedi'}</b><br>NACE: ${c.nace||'—'} · ${h||'tehlike sınıfı seçilmedi'} · ${n} çalışan`;
+ $('warnings').innerHTML=(n&&h?'<div class="alert ok">Çalışan sayısı, tehlike sınıfı ve İSG süreleri hesaplandı. NACE/faaliyet eşleşmesini resmi listeden doğrulayın.</div>':'<div class="alert dangerbox">Çalışan sayısı ve tehlike sınıfı girilmelidir.</div>');
+ const board=n>=50?'İSG Kurulu: 50+ çalışan ve 6 aydan fazla süren sürekli iş koşulunu kontrol et.':'İSG Kurulu: 50+ çalışan eşiği oluşmadı.';
+ const rep=n<=50?'Çalışan temsilcisi: en az 1 kişi (2–50 çalışan aralığı).':'Çalışan temsilcisi sayısı çalışan sayısına göre ayrıca hesaplanmalı.';
+ const dsp=(h==='Çok Tehlikeli'&&n>=10)?'Diğer sağlık personeli: zorunluluk kontrolü gerekli.':'Diğer sağlık personeli: mevcut bilgilerle genel zorunluluk oluşmuyor.';
+ $('obligations').innerHTML=`<div class="alert">${board}</div><div class="alert">${rep}</div><div class="alert">${dsp}</div>`;
+ const expertThreshold = h==='Az Tehlikeli'?2000:h==='Tehlikeli'?1500:h==='Çok Tehlikeli'?1000:0;
+ const doctorThreshold = h==='Az Tehlikeli'?2000:h==='Tehlikeli'?1000:h==='Çok Tehlikeli'?750:0;
+ const eFull=expertThreshold&&n>=expertThreshold?Math.floor(n/expertThreshold):0;
+ const eRem=expertThreshold&&n>=expertThreshold?n%expertThreshold:n;
+ const eRemMin=eRem*(h==='Az Tehlikeli'?6:h==='Tehlikeli'?8:h==='Çok Tehlikeli'?12:0);
+ const dFull=doctorThreshold&&n>=doctorThreshold?Math.floor(n/doctorThreshold):0;
+ const dRem=doctorThreshold&&n>=doctorThreshold?n%doctorThreshold:n;
+ const dRemMin=dRem*(h==='Az Tehlikeli'?5:h==='Tehlikeli'?10:h==='Çok Tehlikeli'?15:0);
+ $('expertCalc').innerHTML=`<p>Mevzuat asgari hesabı: <b>${eFull?eFull+' tam zamanlı uzman':''}${eFull&&eRem?', ayrıca ':''}${eRem?eRemMin+' dk/ay kalan çalışanlar için':''}</b>${!eFull?em+' dk/ay':''}</p><p class="muted">Çalışan başına aylık süre: Az Tehlikeli 6 dk · Tehlikeli 8 dk · Çok Tehlikeli 12 dk. Tam zamanlı eşikleri: 2000 / 1500 / 1000 çalışan.</p>`;
+ $('doctorCalc').innerHTML=`<p>Mevzuat asgari hesabı: <b>${dFull?dFull+' tam zamanlı hekim':''}${dFull&&dRem?', ayrıca ':''}${dRem?dRemMin+' dk/ay kalan çalışanlar için':''}</b>${!dFull?dm+' dk/ay':''}</p><p class="muted">Çalışan başına aylık süre: Az Tehlikeli 5 dk · Tehlikeli 10 dk · Çok Tehlikeli 15 dk. Tam zamanlı eşikleri: 2000 / 1000 / 750 çalışan.</p>`;
+ $('supportCalc').innerHTML=`<p>Yangınla mücadele, arama-kurtarma/tahliye ve koruma ekipleri için başlangıç hesabı: <b>${supportCount(n,h)}</b> kişi/ekip. İlkyardımcı sayısı ayrıca İlkyardım Yönetmeliğine göre hesaplanmalıdır.</p>`;
+ const train=h==='Az Tehlikeli'?8:h==='Tehlikeli'?12:h==='Çok Tehlikeli'?16:0;
+ $('trainingCalc').innerHTML=`<p>Temel eğitim asgari: <b>${train} ders saati/çalışan</b>.</p>`;
+}
+function supportCount(n,h){if(n<1)return 0;if(n<10&&h==='Az Tehlikeli')return 1;return h==='Çok Tehlikeli'?Math.ceil(n/30):h==='Tehlikeli'?Math.ceil(n/40):h==='Az Tehlikeli'?Math.ceil(n/50):0}
+function renewalYears(h){return h==='Çok Tehlikeli'?2:h==='Tehlikeli'?4:h==='Az Tehlikeli'?6:0}
+function addRisk(){S.risks.push({section:'',hazard:'',risk:'',p:1,f:1,s:1,control:'',due:'',method:$('riskMethod').value});save();renderRisks()}
+function riskScore(r){return r.method==='kinney'?r.p*r.f*r.s:r.p*r.s}
+function riskLevel(score,m){if(m==='kinney'){if(score>=400)return'Çok Yüksek';if(score>=200)return'Yüksek';if(score>=70)return'Orta';if(score>=20)return'Düşük';return'Kabul'}else{if(score>=16)return'Çok Yüksek';if(score>=10)return'Yüksek';if(score>=5)return'Orta';return'Düşük'}}
+function renderRisks(){
+ $('riskBody').innerHTML=S.risks.map((r,i)=>`<tr>
+<td><input value="${r.section}" onchange="editRisk(${i},'section',this.value)"></td><td><input value="${r.hazard}" onchange="editRisk(${i},'hazard',this.value)"></td><td><input value="${r.risk}" onchange="editRisk(${i},'risk',this.value)"></td>
+<td><input type="number" min="0" max="10" value="${r.p}" onchange="editRisk(${i},'p',this.value)"></td><td><input type="number" min="0" max="10" value="${r.f}" onchange="editRisk(${i},'f',this.value)"></td><td><input type="number" min="0" max="100" value="${r.s}" onchange="editRisk(${i},'s',this.value)"></td>
+<td><b>${riskScore(r)}</b></td><td>${riskLevel(riskScore(r),r.method)}</td><td><textarea onchange="editRisk(${i},'control',this.value)">${r.control}</textarea><input type="date" value="${r.due}" onchange="editRisk(${i},'due',this.value)"></td>
+<td><button class="btn danger" onclick="S.risks.splice(${i},1);save();renderRisks()">Sil</button></td></tr>`).join('');
+}
+function editRisk(i,k,v){S.risks[i][k]=['p','f','s'].includes(k)?+v:v;S.risks[i].method=$('riskMethod').value;save();renderRisks()}
+function addEmergency(){S.emergencies.push({name:'',prevent:'',response:'',owner:'',drill:''});save();renderEmergencies()}
+function renderEmergencies(){$('emergencyBody').innerHTML=S.emergencies.map((e,i)=>`<tr>
+<td><input value="${e.name}" onchange="eSet(${i},'name',this.value)"></td><td><textarea onchange="eSet(${i},'prevent',this.value)">${e.prevent}</textarea></td><td><textarea onchange="eSet(${i},'response',this.value)">${e.response}</textarea></td><td><input value="${e.owner}" onchange="eSet(${i},'owner',this.value)"></td><td><input type="date" value="${e.drill}" onchange="eSet(${i},'drill',this.value)"></td><td><button class="btn danger" onclick="S.emergencies.splice(${i},1);save();renderEmergencies()">Sil</button></td></tr>`).join('')}
+function eSet(i,k,v){S.emergencies[i][k]=v;save()}
+function generateAnnual(){
+ const h=S.company.hazard||'';
+ const base=['Aylık saha gözetimi ve İSG tespitleri','Risk kontrol tedbirlerinin takibi','Acil durum ekipmanlarının kontrolü','Çalışan bilgilendirme / eğitim faaliyetleri','İş kazası ve ramak kala kayıtlarının değerlendirilmesi','Yıllık İSG değerlendirme ve plan güncellemesi'];
+ const rows=[];for(let m=1;m<=12;m++){rows.push({m,task:base[0],period:'Aylık',owner:'İSG Uzmanı',status:'Planlandı'});if(m%3===0)rows.push({m,task:base[1],period:'3 aylık',owner:'İSG Uzmanı + İşveren',status:'Planlandı'});if(m===1)rows.push({m,task:base[5],period:'Yıllık',owner:'İSG Uzmanı + İşveren',status:'Planlandı'});if(m===6||m===12)rows.push({m,task:base[2],period:'6 aylık',owner:'İşveren',status:'Planlandı'});}
+ S.annual=rows;save();renderAnnual()
+}
+function renderAnnual(){$('annualBody').innerHTML=S.annual.map(r=>`<tr><td>${r.m}. Ay</td><td>${r.task}</td><td>${r.period}</td><td>${r.owner}</td><td>${r.status}</td></tr>`).join('')}
+function generateMonthly(){
+ const y=+$('planYear').value||new Date().getFullYear(),m=+$('planMonth').value||new Date().getMonth()+1;
+ const tasks=['Saha gözetimi / çalışma ortamı kontrolü','Risk değerlendirmesi kontrolü ve yeni risklerin eklenmesi','Acil durum ekipleri ve ekipmanlarının kontrolü','İSG tespit ve önerilerinin işverene bildirilmesi','Çalışan bilgilendirme / eğitim','Önceki ay uygunsuzluklarının kapanış kontrolü'];
+ S.monthly=tasks.map((t,i)=>({date:`${y}-${String(m).padStart(2,'0')}-${String(Math.min(5+i*4,28)).padStart(2,'0')}`,task:t,duration:i===0?'60 dk':'30 dk',desc:'İşyerine özgü saha çalışması',status:'Planlandı'}));save();renderMonthly()
+}
+function renderMonthly(){$('monthlyBody').innerHTML=S.monthly.map(r=>`<tr><td>${r.date}</td><td>${r.task}</td><td>${r.duration}</td><td>${r.desc}</td><td>${r.status}</td></tr>`).join('')}
+function generateTraining(){
+ const h=S.company.hazard||'';const base=h==='Az Tehlikeli'?8:h==='Tehlikeli'?12:h==='Çok Tehlikeli'?16:0;
+ S.training=[
+ {n:'Temel İSG eğitimi',target:'Tüm çalışanlar',hours:base+' ders saati/çalışan',method:'Mevzuata uygun',period:h==='Az Tehlikeli'?'3 yılda bir':h==='Tehlikeli'?'2 yılda bir':h==='Çok Tehlikeli'?'Yılda bir':'—'},
+ {n:'İşe başlama eğitimi',target:'Yeni başlayanlar',hours:'En az 2 saat',method:'Yüz yüze + uygulamalı',period:'İşe başlamadan önce'},
+ {n:'Bilgi yenileme eğitimi',target:'6 aydan fazla uzak kalanlar',hours:'İşyeri ihtiyacına göre',method:h==='Az Tehlikeli'?'Uzaktan/yüz yüze':'Yüz yüze',period:'İşe dönüşten önce'}
+ ];save();renderTraining()
+}
+function renderTraining(){$('trainingBody').innerHTML=S.training.map(r=>`<tr><td>${r.n}</td><td>${r.target}</td><td>${r.hours}</td><td>${r.method}</td><td>${r.period}</td></tr>`).join('')}
+function addFinding(){S.findings.push({area:'',issue:'',ref:'',risk:'',fix:'',due:'',status:'Açık'});save();renderFindings()}
+function renderFindings(){$('findingBody').innerHTML=S.findings.map((f,i)=>`<tr><td><input value="${f.area}" onchange="fSet(${i},'area',this.value)"></td><td><textarea onchange="fSet(${i},'issue',this.value)">${f.issue}</textarea></td><td><input value="${f.ref}" onchange="fSet(${i},'ref',this.value)"></td><td><select onchange="fSet(${i},'risk',this.value)"><option ${f.risk==='Düşük'?'selected':''}>Düşük</option><option ${f.risk==='Orta'?'selected':''}>Orta</option><option ${f.risk==='Yüksek'?'selected':''}>Yüksek</option><option ${f.risk==='Çok Yüksek'?'selected':''}>Çok Yüksek</option></select></td><td><textarea onchange="fSet(${i},'fix',this.value)">${f.fix}</textarea></td><td><input type="date" value="${f.due}" onchange="fSet(${i},'due',this.value)"></td><td><select onchange="fSet(${i},'status',this.value)"><option ${f.status==='Açık'?'selected':''}>Açık</option><option ${f.status==='Devam ediyor'?'selected':''}>Devam ediyor</option><option ${f.status==='Kapandı'?'selected':''}>Kapandı</option></select></td><td><button class="btn danger" onclick="S.findings.splice(${i},1);save();renderFindings()">Sil</button></td></tr>`).join('')}
+function fSet(i,k,v){S.findings[i][k]=v;save()}
+function renderTeam(){const n=S.company.employees||0,h=S.company.hazard||'';$('teamSummary').innerHTML=`<p>Yangınla mücadele: <b>${supportCount(n,h)}</b> · Arama/kurtarma-tahliye: <b>${supportCount(n,h)}</b> · Koruma: <b>${supportCount(n,h)}</b> (mevzuat kapsamındaki ekip hesabı).</p>`}
+
+const ACTIVITY_LIBRARY={
+'Ofis / Büro':[
+['Çalışma ortamı','Ekranlı araçlarla çalışma, ergonomi ve aydınlatma','Ergonomi düzeni, ekran-masa-sandalye uygunluğu, mola/bilgilendirme'],
+['Elektrik','Priz, uzatma kablosu, pano ve kablo düzeni','Yetkisiz müdahale önleme, periyodik kontroller, kablo düzeni'],
+['Acil durum','Yangın, deprem, tahliye ve toplanma alanı','Acil durum planı, yönlendirme, tatbikat ve ekipler'],
+['Kayma/düşme','Islak zemin, geçiş yolları, merdivenler','Temizlik prosedürü, korkuluk, kaymaz yüzey ve düzen'],
+['İş organizasyonu','Çalışan bilgilendirmesi ve eğitim kayıtları','İSG eğitimleri, çalışan temsilcisi ve kayıtların takibi']
+],
+'Restoran / Kafe':[
+['Mutfak','Sıcak yüzey, kızgın yağ, kesici ekipman','Koruyucular, güvenli çalışma, KKD, yangın tedbirleri'],
+['Gaz','LPG/doğalgaz ve gaz tesisatı','Gaz dedektörü/ventilasyon, kaçak prosedürü, yetkili kontroller'],
+['Kimyasal','Temizlik kimyasalları ve etiketleme','GBF/SDS, etiket, depolama, KKD ve maruziyet önlemleri'],
+['Kayma/düşme','Islak ve yağlı zeminler','Temizlik planı, kaymaz yüzey, uygun ayakkabı'],
+['Yangın','Mutfak yangını ve tahliye','Uygun söndürme sistemi, davlumbaz/baca temizliği, tatbikat']
+],
+'Metal İmalat':[
+['Makine','Pres, torna, kesim ve sıkışma/kesilme','Makine koruyucuları, acil stop, yetkili kullanım'],
+['Kaynak','Kaynak dumanı, radyasyon, yangın','Lokal emiş, KKD, yangın önlemleri, tüp güvenliği'],
+['Kaldırma','Vinç, forklift ve yük kaldırma','Periyodik kontrol, operatör yetkinliği, trafik planı'],
+['Kimyasal','Yağ, solvent, kaplama kimyasalları','GBF/SDS, depolama, havalandırma, döküntü prosedürü'],
+['Gürültü','Makine kaynaklı gürültü','Ölçüm, mühendislik kontrolleri, işitme koruyucu']
+],
+'Depo / Lojistik':[
+['Forklift','Araç-yaya etkileşimi','Trafik planı, hız sınırı, yaya yolları, operatör yetkinliği'],
+['Raflar','Raf devrilmesi ve malzeme düşmesi','Raf kontrolleri, ankraj, yükleme kapasitesi'],
+['Elle taşıma','Ergonomi ve aşırı yük','Mekanik yardımcılar, taşıma eğitimi, iş organizasyonu'],
+['Yangın','Depolanan malzemenin yangın yükü','Yangın algılama/söndürme, kaçış yolları, depolama düzeni'],
+['Acil durum','Tahliye ve toplanma','Ekipler, plan, yönlendirme ve yıllık tatbikat']
+],
+'İnşaat':[
+['Yüksekte çalışma','Düşme riski','Korkuluk, yaşam hattı, iskele kontrolleri, uygun KKD'],
+['Kazı','Göçük ve toprak kayması','Şev/iksa, erişim, günlük kontroller'],
+['Kaldırma','Vinç ve kaldırma operasyonları','Planlama, işaretçi, sapan/aksesuar kontrolleri'],
+['Elektrik','Geçici elektrik tesisatı','Kaçak akım, pano/kablo güvenliği, yetkili müdahale'],
+['Malzeme','Düşen cisim ve düzensizlik','İstifleme, altından geçmeme, düzen ve temizlik']
+]
+};
+const COMMON_CHECKS=[
+['Dokümantasyon','Risk değerlendirmesi güncel mi?','Risk değerlendirmesi dokümanı ve ekip kayıtları'],
+['Acil durum','Acil durum planı ve tatbikat kayıtları mevcut mu?','Plan, krokiler, tatbikat formu'],
+['Eğitim','Temel İSG ve işe başlama eğitimleri kayıtlı mı?','Eğitim katılım/belge kayıtları'],
+['Sağlık gözetimi','İşe giriş ve periyodik muayeneler uygun mu?','Sağlık raporları ve takip'],
+['KKD','KKD seçimi, teslimi ve kullanımı uygun mu?','KKD zimmet/eğitim/kullanım'],
+['İş ekipmanları','Periyodik kontrol gerektiren ekipmanların kontrolleri güncel mi?','Periyodik kontrol raporları'],
+['Elektrik','Elektrik tesisatı ve topraklama kontrolleri uygun mu?','Yetkili kontrol raporları'],
+['Kaçış yolları','Acil çıkışlar ve yolları açık, işaretli ve aydınlatılmış mı?','Saha gözlemi ve acil durum krokisi']
+];
+function generateChecklist(){
+ const a=S.company.activity||'';
+ let rows=[...(ACTIVITY_LIBRARY[a]||[]),...COMMON_CHECKS];
+ $('checklistBox').innerHTML=`<div style="overflow:auto"><table><thead><tr><th>Başlık</th><th>Kontrol konusu</th><th>Aranan / önerilen husus</th><th>Durum</th><th>Not</th></tr></thead><tbody>`+
+ rows.map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><select><option>Uygun</option><option>Uygunsuz</option><option>Kısmen uygun</option><option>Uygulanamaz</option></select></td><td><input placeholder="Saha notu"></td></tr>`).join('')+
+ `</tbody></table></div>`;
+}
+
+function renderAll(){loadForm();calculate();renderRisks();renderEmergencies();renderTeam();renderAnnual();renderMonthly();renderTraining();renderFindings();$('planYear').value=new Date().getFullYear();}
+function loadForm(){const c=S.company||{};['company','sgk','employer','employees','nace','hazard','address','doctor','expertClass','activity','workType'].forEach(k=>{if($(k)&&c[k]!==undefined)$(k).value=c[k]})}
+function exportData(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='isg-program-verileri.json';a.click()}
+function importData(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{Object.assign(S,JSON.parse(r.result));save();renderAll();alert('Veriler içe aktarıldı.')};r.readAsText(f)}
+function printSection(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');window.print();document.querySelector('[data-tab="'+id+'"]').click()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));$(b.dataset.tab).classList.add('active');b.classList.add('active')});
+for(let i=1;i<=12;i++)$('planMonth').innerHTML+=`<option value="${i}">${i}. Ay</option>`;
+$('riskDate').value=new Date().toISOString().slice(0,10);
+$('riskDate').onchange=()=>{const d=new Date($('riskDate').value);const y=renewalYears(S.company.hazard);if(y){d.setFullYear(d.getFullYear()+y);$('riskNext').value=d.toISOString().slice(0,10)}};
+load();renderAll();generateTraining();renderTraining();
+</script>
+</body>
+</html>
